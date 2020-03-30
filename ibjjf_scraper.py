@@ -43,7 +43,6 @@ class ibjjf_scraper():
       self.unverified = ast.literal_eval(unverified_file.read())
     # get the last id checked
     #self.last_id_checked = self.config.get('last_id_checked')
-    self.last_id_checked = max(self.verified + self.unverified)
     self.batch_size = batch_size
 
 
@@ -57,6 +56,7 @@ class ibjjf_scraper():
 
 
   def process(self):
+    self.last_id_checked = max(self.verified + self.unverified)
     self.populate_list(batch_size=self.batch_size)
     for id in self.id_to_check:
       time.sleep(self.wait_time)
@@ -100,14 +100,14 @@ if __name__=='__main__':
   try:
     batch_size = int(sys.argv[1])
     time_between_runs = int(sys.argv[2])
-    hours_to_run = int(sys.argv[3])
+    times_to_run = int(sys.argv[3])
   except:
     print("Need 3 arguments as integers: batch size, time between runs (in seconds), number of times to run")
     raise
 
   s = ibjjf_scraper(batch_size)
   i = 0
-  while i < hours_to_run:
+  while i < times_to_run:
     s.process()
     time.sleep(time_between_runs)
     i+=1
