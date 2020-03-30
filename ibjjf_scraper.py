@@ -102,7 +102,7 @@ if __name__=='__main__':
     time_between_runs = int(sys.argv[2])
     hours_to_run = int(sys.argv[3])
   except:
-    print("Need 3 arguments as integers: batch size, time between runs (in seconds), hours to run (in hours)")
+    print("Need 3 arguments as integers: batch size, time between runs (in seconds), number of times to run")
     raise
 
   s = ibjjf_scraper(batch_size)
