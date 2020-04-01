@@ -14,15 +14,14 @@ def process_test(filename):
     # get tournament name
     tournament = soup.find_all("div", id="content")[0].h2.string.strip()
     # dont process rules seminar registrationas
-    if 'Rules Seminar' in tournament or 'Regras' in tournament:
+    if 'Rules Seminar' in tournament or 'Regras' in tournamentv:
       return
-    #get all divisions. divisions identified by <div class='row'> ... </div>
-    divisions = soup.find_all("div", class_="row")
 
     # begin processing entire file. convert each athlete entry into the following format:
     # tournament name, division name, team name, athlete name
     # create a list of lists
     results = []
+    #get all divisions. divisions identified by <div class='row'> ... </div>
     for div in soup.find_all("div", class_="row"):
       # <h4> is the division name
       division_name = div.h4.string

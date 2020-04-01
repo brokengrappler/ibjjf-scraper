@@ -5,7 +5,16 @@ import ast
 import time
 
 
+
 class ibjjf_scraper():
+  """
+    ibjjf_scraper() class
+    - this class is specifically for scraping from www.ibjjfdb.com. in their backend (db), they've assigned
+    an ID to each tournament and referee course
+    - we know their id's start somewhere around 100-150, and the most recent ID is somewhere around 1500
+    - the tournaments logged in their db are from appx 2012 to now. tournaments before that cannot be scraped through
+    this class
+  """
   config = {}
   config_filename = 'config.json'
   verified_filename = './data/verified.txt'
@@ -29,20 +38,17 @@ class ibjjf_scraper():
     "ids_checked" : 0
   }
   
-  #MAX = 1500
   def __init__(self, batch_size):
-    # these files keep track of config settings and what id's we've already checked
-    # may not need config for now
-    with open(self.config_filename, 'r') as config_file:
-      self.config = ast.literal_eval(config_file.read())
-    # id returns successful result, add to this list
+    # keep config values in this file. don't really need this. ignore this for now
+    #with open(self.config_filename, 'r') as config_file:
+    #  self.config = ast.literal_eval(config_file.read())
+    # id returns successful result, add to verified list
     with open(self.verified_filename,'r') as verified_file:
       self.verified = ast.literal_eval(verified_file.read())
-    # if an id returns noting, these id's should be placed in here
+    # if an id returns nothing/fails, these id's added to unverfied list
     with open(self.unverified_filename,'r') as unverified_file:
       self.unverified = ast.literal_eval(unverified_file.read())
-    # get the last id checked
-    #self.last_id_checked = self.config.get('last_id_checked')
+    # number of id's to process
     self.batch_size = batch_size
 
 
@@ -51,12 +57,14 @@ class ibjjf_scraper():
     try:
       self.id_to_check = [id for id in range(self.last_id_checked+1, self.last_id_checked+batch_size)]
     except:
-      print('last_id_checked undefined')
+      print("last_id_checked undefined")
       raise
 
 
   def process(self):
+    # get the last id value, whether verified or unverified
     self.last_id_checked = max(self.verified + self.unverified)
+    # call populate_list() to create list of ID's to check
     self.populate_list(batch_size=self.batch_size)
     for id in self.id_to_check:
       time.sleep(self.wait_time)
@@ -69,10 +77,12 @@ class ibjjf_scraper():
         self.unverified.append(id)
         continue
       self.verified.append(id)
+      # this is wrong. it's only counting successful id's checked
       self.stats['ids_checked'] += 1
+    # call wrap_up(): write verified/unverified to file so can track what we checked in the last run
     self.wrap_up()
 
-
+  # poorly named function. this is just a request call
   def scrape_ibjjf(self, outfile_name, url):
     try:
       res = requests.get(url)
