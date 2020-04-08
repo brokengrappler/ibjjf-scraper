@@ -54,10 +54,10 @@ def process_soup(soup_res):
                 division_name = bs_str_cleaner(test_text)
                 continue
             if '-' in test_text:
-                athlete_info = bs_str_cleaner(test_text)
-                athlete_info = athlete_info.split('-')
+                athlete_info = test_text.split('-')
                 row = [tournament_name, division_name]
                 for items in athlete_info:
+                    items = items.strip()
                     row.append(items)
                 result_list.append(row)
     return result_list
@@ -87,7 +87,7 @@ def convert_to_csv(path):
     if 'failed' in filename:
       continue
     
-    if 'result' in filename:
+    if 'result_1000' in filename:
       res = process_results(path+filename)
       # if array is empty or Nonetype, then dont make a file
       if res:
