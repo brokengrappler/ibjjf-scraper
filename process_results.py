@@ -33,8 +33,9 @@ def process_soup(soup_res):
     row = []
     division_name = ''
     athlete_info= ''
+    
     for m in soup_res:
-        if m.h2:
+        if m.find('h2') != None:
             tournament_name = m.h2.get_text(strip=True)
             pass
         gutted = m.find_all('div', class_='col-xs-12')
@@ -54,10 +55,11 @@ def process_soup(soup_res):
                 division_name = bs_str_cleaner(test_text)
                 continue
             if '-' in test_text:
-                athlete_info = bs_str_cleaner(test_text)
-                athlete_info = athlete_info.split('-')
+                athlete_info = test_text.split('\n\t\t')
                 row = [tournament_name, division_name]
                 for items in athlete_info:
+                    items = items.replace('-\n','')
+                    items = items.lstrip()
                     row.append(items)
                 result_list.append(row)
     return result_list
